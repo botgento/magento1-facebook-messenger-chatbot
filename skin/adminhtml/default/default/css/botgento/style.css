@@ -1,0 +1,44 @@
+/**
+ * Botgento
+ *
+ * @category    Botgento
+ * @package     Botgento_Base
+ * @author      Botgento Team <support@botgento.com>
+ * @copyright   Botgento (https://www.botgento.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+div.botgento-notice{
+    background:#EAF0EE;
+    border:1px solid #CCCCCC;
+    margin-bottom:10px;
+    padding:11px 0 0 10px;
+}
+.botgento-notice h4{
+    font-size: 14px;
+}
+ul.tabs a.botgento-section:before{
+    content: "";
+    background: url(../../images/botgento-icon.png) no-repeat;
+    padding: 0.3em 0em 0.28em 3.7em;
+    cursor: pointer;
+    background-position: 18px center;
+    background-size: 20px;
+}
+ul.tabs a.botgento-section{
+    background: url(../../images/tabs_span_bg.gif) repeat-x 0 100%;
+}
+ul.tabs a.botgento-section:hover{
+    background-color: #D8E6E6;
+    background-image: url(../../images/tabs_link_over_bg.gif);
+}
+ul.tabs a.botgento-section span{
+    display: inline-block;
+    padding-left: 0;
+}
+ul.tabs a.botgento-section.active span, ul.tabs a.botgento-section:hover.active span{
+    background: inherit;
+}
+
+ul.tabs a.botgento-section.active, ul.tabs a.botgento-section:hover.active{
+    background: #fff;
+}

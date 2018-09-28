@@ -1,0 +1,35 @@
+<?php
+/**
+ * Botgento
+ *
+ * @category    Botgento
+ * @package     Botgento_Base
+ * @author      Botgento Team <support@botgento.com>
+ * @copyright   Botgento (https://www.botgento.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * @var  $botHelper Botgento_Base_Helper_Data
+ */
+$botHelper = Mage::helper('botgento');
+if (0 && $botHelper->isEnable() && $botHelper->isShowFacebookButton()) {
+    $token = $botHelper->getWebsiteApiKey();
+    $websiteHash = $botHelper->getWebsiteHash();
+    $url = $botHelper->getBotgentoApiUrl("$websiteHash/get-messageus-btn");
+    $email = '';
+    if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        $email = $customer->getEmail();
+    }
+    $request = Mage::app()->getRequest();
+    $page = $request->getRouteName()
+        . "_" . $request->getControllerName()
+        . "_" . $request->getActionName();
+    $auth = array('Authorization:' . $token);
+    $data = array('email' => $email, 'page' => $page);
+    $response = $botHelper->getCurlData($url, $auth, $data);
+    if ($response['code'] == 200) {
+        echo $response['data']['content'];
+    }
+}

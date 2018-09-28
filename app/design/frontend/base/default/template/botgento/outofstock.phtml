@@ -1,0 +1,115 @@
+<?php
+$botHelper = Mage::helper('botgento');
+if ($botHelper->isEnable() && $botHelper->getInStockEnable()) {
+    $product = $this->getProduct();
+
+    $curentPageTitle = $this->getLayout()->getBlock('head')->getTitle();
+    
+    $output = $botHelper->genBGCValue($curentPageTitle);
+
+    if (!empty($product) && !$product->isAvailable()) {
+
+        ?>
+        <div class="botgento-instock-alert">
+            <p class="botgento-instock-alert-text"><?php echo $this->__('Notify me when this product is back in stock') ?></p>
+            <div id="fb-loader" class="fb-loader" style="clear: both">
+                <img src="<?php echo $this->getSkinUrl("images/fb-loader.gif"); ?>"
+                     alt="<?php echo $this->escapeHtml($this->__('Please wait...')); ?>"
+                     title="<?php echo $this->escapeHtml($this->__('Please wait...')); ?>"
+                     class="v-middle" width="30px">
+            </div>
+            <div class="fb-send-to-messenger text-center"
+                 messenger_app_id="<?php echo $botHelper->getMessengerappId() ?>"
+                 page_id="<?php echo $botHelper->getFbPageId() ?>"
+                 data-ref="INSTOCK_<?php echo $output ?>" 
+                 color="<?php echo $botHelper->getInStockButtonColor() ?>"
+                 cta_text="<?php echo $botHelper->getInStockButtonText() ?>"
+                 size="<?php echo $botHelper->getInStockButtonSize() ?>">
+            </div>
+        </div>
+        <script type="text/javascript">
+            var scriptLoad = (function() {
+              function _load(tag) {
+                return function(url) {
+                  // This promise will be used by Promise.all to determine success or failure
+                  return new Promise(function(resolve, reject) {
+                    var element = document.createElement(tag);
+                    var parent = 'body';
+                    var attr = 'src';
+
+                    // Important success and error for the promise
+                    element.onload = function() {
+                      resolve(url);
+                    };
+                    element.onerror = function() {
+                      reject(url);
+                    };
+
+                    // Need to set different attributes depending on tag type
+                    switch(tag) {
+                      case 'script':
+                        element.async = true;
+                        break;
+                      case 'link':
+                        element.type = 'text/css';
+                        element.rel = 'stylesheet';
+                        attr = 'href';
+                        parent = 'head';
+                    }
+
+                    // Inject into document to kick off loading
+                    element[attr] = url;
+                    document[parent].appendChild(element);
+                  });
+                };
+              }
+              
+              return {
+                css: _load('link'),
+                js: _load('script'),
+                img: _load('img')
+              }
+            })();
+            jQuery(document).ready(renderedFBBtn);
+
+            function renderedFBBtn() {
+
+                Promise.all([
+                  scriptLoad.js('https://connect.facebook.net/en_US/sdk.js'), 
+                  //load.css('lib/highlighter.css'),
+                  //load.img('images/logo.png')
+                ]).then(function() {
+                  FB.init({
+                      appId: '<?php echo $botHelper->getMessengerappId() ?>',
+                      autoLogAppEvents: true,
+                      xfbml: true,
+                      version: 'v3.0'
+                  });
+                  FB.Event.subscribe('send_to_messenger', function (e) {
+                      if (e.event == 'rendered') {
+                            document.getElementById("fb-loader").style.display = "none";
+                        }
+                        // callback for events triggered by the plugin
+                        if (e.event == 'opt_in') {
+                            jQuery.ajax({
+                                url: "<?php echo $this->getUrl('botgento/instock/alert');?>",
+                                data: {
+                                    product_id: "<?php echo $product->getId() ?>",
+                                    uuid: "<?php echo $botHelper->getUuid() ?>"
+                                },
+                                success: function (xhr) {
+                                    console.log(xhr);
+                                }
+                            });
+                        }
+                  });
+                }).catch(function() {
+                  console.log('Oh no, epic failure!');
+                });
+
+            }
+        </script>
+<?php
+    }
+}
+?>

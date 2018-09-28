@@ -1,0 +1,40 @@
+<?php
+/**
+ * Botgento
+ *
+ * @category    Botgento
+ * @package     Botgento_Base
+ * @author      Botgento Team <support@botgento.com>
+ * @copyright   Botgento (https://www.botgento.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * @var  $botHelper Botgento_Base_Helper_Data
+ */
+$botHelper = Mage::helper('botgento');
+if ($botHelper->isEnable()) {
+
+    $curentPageTitle = $this->getLayout()->getBlock('head')->getTitle();
+    
+    $output = $botHelper->genBGCValue($curentPageTitle);
+    $uuid = $botHelper->getUuid();
+
+    ?>
+    <script type="text/javascript">
+        var bgc_uuid = "<?php echo $uuid ?>";
+        var bgc = "<?php echo $output ?>";
+
+        function setBgc() {
+            jQuery.ajax({
+                url: "<?php echo $this->getUrl('botgento/demo/bgc');?>",
+                headers : { 'Authorization' : "<?php echo $botHelper->getWebsiteApiKey();?>" },
+                success: function (xhr) {
+                    console.log(xhr);
+                }
+            });
+        }
+    </script>
+<?php
+}
+?>

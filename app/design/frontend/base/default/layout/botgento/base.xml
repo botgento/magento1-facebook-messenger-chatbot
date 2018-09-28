@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Botgento
+ *
+ * @category    Botgento
+ * @package     Botgento_Base
+ * @author      Botgento Team <support@botgento.com>
+ * @copyright   Botgento (https://www.botgento.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<layout version="0.1.0">
+    <default>
+        <reference name="head">
+            <action method="addJs">
+                <script>botgento/jquery-1.12.0.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>botgento/noconflict.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/botgento/custom.css</stylesheet>
+            </action>
+            <block type="core/template" name="botgento-extra-head" template="botgento/extra_head.phtml"/>
+        </reference>
+        <reference name="before_body_end">
+            <block type="core/template" name="botgento-fb-button" template="botgento/facebook.phtml"/>
+        </reference>
+    </default>
+    <checkout_onepage_index>
+        <reference name="head">
+            <action method="addCss" ifconfig="base_options/botgento/enabled">
+                <stylesheet>css/botgento/style.css</stylesheet>
+            </action>
+        </reference>
+    </checkout_onepage_index>
+    <checkout_onepage_review>
+        <reference name="checkout.onepage.review.info.items.after">
+            <block type="core/template" name="botgento-messenger-checkbox" template="botgento/botgento.phtml"/>
+        </reference>
+    </checkout_onepage_review>
+    <catalog_product_view>
+        <reference name="content">
+            <reference name="product.info">
+                <reference name="alert.urls">
+                    <block type="catalog/product_view" name="botgento-product-outofstock-button" template="botgento/outofstock.phtml" after="-"/>
+                </reference>
+            </reference>
+        </reference>
+    </catalog_product_view>
+</layout>

@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Botgento
+ *
+ * @category    Botgento
+ * @package     Botgento_Base
+ * @author      Botgento Team <support@botgento.com>
+ * @copyright   Botgento (https://www.botgento.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+-->
+<config>
+    <tabs>
+        <botgento module="botgento">
+            <label>Botgento</label>
+            <sort_order>200</sort_order>
+        </botgento>
+    </tabs>
+    <sections>
+        <base_options translate="label" module="botgento">
+            <label>Botgento</label>
+            <class>botgento-section</class>
+            <tab>botgento</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>90</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <hint>
+                    <frontend_model>botgento/adminhtml_system_config_fieldset_hint</frontend_model>
+                    <sort_order>0</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </hint>
+                <extensions translate="label">
+                    <label>General Configuration</label>
+                    <comment><![CDATA[<strong>IMPORTANT:</strong><br/><strong>To change Botgento Configuration, select your desired website in <strong style="color:red;">Currrent Configuration Scope</strong>
+					<br/><br/>]]></comment>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>91</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>0</show_in_website>
+                    <show_in_store>1</show_in_store>
+                </extensions>
+                <botgento translate="label">
+                    <label>General Configuration</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>90</sort_order>
+                    <show_in_default>0</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <enabled translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </enabled>
+                        <api_key translate="label">
+                            <label>API Token</label>
+                            <frontend_type>text</frontend_type>
+                            <frontend_model>botgento/adminhtml_renderer</frontend_model>
+                            <backend_model>botgento/system_config_backend_configuredoptions</backend_model>
+                            <comment>Botgento API token. This field will automatically populated once you connect Facebook page in Botgento portal</comment>
+                            <sort_order>2</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </api_key>
+                        <checkbox_enable translate="label">
+                            <label>Enable Facebook Checkbox Plugin</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <comment>If enabled, Facebook Checkbox appears inside Order Review step of the checkout page. It helps users to Opt-in for Facebook messenger updates.</comment>
+                            <sort_order>5</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </checkbox_enable>
+                        <!--<facebook_button translate="label">
+                            <label>Enable Facebook Button</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <comment>If enabled, your Facebook chatbot link button will be displayed on your storefront.</comment>
+                            <sort_order>6</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </facebook_button>-->
+                    </fields>
+                </botgento>
+
+                <order translate="label">
+                    <label>Transaction Message Configuration</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>92</sort_order>
+                    <show_in_default>0</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <order_confirmation translate="label">
+                            <label>Send Order Confirmation</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </order_confirmation>
+                        <send_timer translate="label">
+                            <label>Send Order Confirmation After</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                            <comment>In Seconds</comment>
+                        </send_timer>
+                        <shipment_details translate="label">
+                            <label>Send Shipment Details</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>4</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </shipment_details>
+                    </fields>
+                </order>
+                <instock translate="label">
+                    <label>Back In Stock Alert Configuration</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>92</sort_order>
+                    <show_in_default>0</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>0</show_in_store>
+                    <fields>
+                        <enabled translate="label">
+                            <label>Enable</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </enabled>
+                        <button_text translate="label">
+                            <label>Button Text</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>botgento/system_config_source_buttontype</source_model>
+                            <sort_order>20</sort_order>
+                            <depends><enabled>1</enabled></depends>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </button_text>
+                        <button_color translate="label">
+                            <label>Button Color</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>botgento/system_config_source_buttoncolor</source_model>
+                            <sort_order>30</sort_order>
+                            <depends><enabled>1</enabled></depends>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </button_color>
+                        <button_size translate="label">
+                            <label>Button Size</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>botgento/system_config_source_buttonsize</source_model>
+                            <sort_order>40</sort_order>
+                            <depends><enabled>1</enabled></depends>
+                            <show_in_default>0</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </button_size>
+                    </fields>
+                </instock>
+            </groups>
+        </base_options>
+    </sections>
+</config>

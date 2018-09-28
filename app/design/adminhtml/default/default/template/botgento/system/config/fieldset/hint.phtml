@@ -1,0 +1,31 @@
+<?php
+/**
+ * Botgento
+ *
+ * @category    Botgento
+ * @package     Botgento_Base
+ * @author      Botgento Team <support@botgento.com>
+ * @copyright   Botgento (https://www.botgento.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+<div class="botgento-notice">
+    <img src="<?php echo $this->getSkinUrl('images/botgento_logo.png', array('_secure' => true)) ?>" width="280" />
+    <h4>
+        <?php
+        echo Mage::helper('botgento')->__(
+            '<span style="color:#EA7601;">Botgento For Magento v%s by</span>
+<a target="_blank" href="%s"><strong>Aureatelabs</strong></a>', $this->getBotgentoVersion(),
+            'https://aureatelabs.com/'
+        );
+        ?>
+        <br>
+        <?php
+        echo Mage::helper('botgento')->__(
+            'For technical support visit our <a href="%s"
+target="_blank"><span>Help Center</span></a> or email us at <a href="mailto:%s"><span>%s</span></a>',
+            'https://support.botgento.com', 'support@botgento.com', 'support@botgento.com'
+        )
+        ?>
+    </h4>
+</div>

@@ -1,0 +1,124 @@
+<?php
+/**
+ * Botgento
+ *
+ * @category    Botgento
+ * @package     Botgento_Base
+ * @author      Botgento Team <support@botgento.com>
+ * @copyright   Botgento (https://www.botgento.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * @var Botgento_Base_Helper_Data $botHelper
+ */
+$botHelper = Mage::helper('botgento');
+$messengerappId = $botHelper->getMessengerappId();
+$fbPageId = $botHelper->getFbPageId();
+
+if ($botHelper->isEnable() && $botHelper->isFacebookCheckboxEnable()
+    && $botHelper->checkCustomerNotExist()
+) {
+    $randVal = rand(100000, 999999);
+    ?>
+    <h2 class="messenger-title" id="messenger-title">
+        <?php echo $this->escapeHtml($this->__('Send order updates on:')); ?>
+    </h2>
+    <div id="fb-loader" class="fb-loader">
+        <img src="<?php echo $this->getSkinUrl("images/fb-loader.gif"); ?>"
+             alt="<?php echo $this->escapeHtml($this->__('Please wait...')); ?>"
+             title="<?php echo $this->escapeHtml($this->__('Please wait...')); ?>"
+             class="v-middle"> <?php echo $this->escapeHtml($this->__('Please wait...')); ?>
+    </div>
+    <input type="hidden" name="fbmessenger" id="fbmessenger" value=""/>
+    <input type="hidden" name="user_ref" id="user_ref" value="<?php echo $this->escapeHtml($randVal); ?>"/>
+    <div class="fb-messenger-checkbox"
+         origin="<?php echo $botHelper->origin(); ?>"
+         page_id="<?php echo $this->escapeHtml($fbPageId); ?>"
+         messenger_app_id="<?php echo $this->escapeHtml($messengerappId); ?>"
+         user_ref="<?php echo $this->escapeHtml($randVal); ?>"
+         data-ref="<?php echo $this->escapeHtml($randVal); ?>"
+         prechecked="false"
+         allow_login="true" size="small">
+    </div>
+    <script>
+
+    </script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            jQuery.ajaxSetup({cache: true});
+            jQuery.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
+                facebookInit();
+                facebookEvent();
+            });
+        });
+
+
+        function facebookInit() {
+            FB.init({
+                appId: "<?php echo $this->escapeHtml($messengerappId); ?>",
+                autoLogAppEvents: true,
+                xfbml: true,
+                version: 'v3.1'
+            });
+        }
+
+        function facebookEvent() {
+            FB.Event.subscribe('messenger_checkbox', function (e) {
+                if (e.event == 'rendered') {
+                    document.getElementById("fb-loader").style.display = "none";
+                    document.getElementById("messenger-title").style.display = "block";
+                } else if (e.event == 'checkbox') {
+                    document.getElementById("fbmessenger").value = e.state;
+                } else if (e.event == 'not_you') {
+                    //console.log("User clicked 'not you'");
+                } else if (e.event == 'hidden') {
+                    document.getElementById("fb-loader").style.display = "none";
+                    //console.log("Plugin was hidden");
+                }
+            });
+        }
+
+        function confirmOptIn() {
+            FB.AppEvents.logEvent('MessengerCheckboxUserConfirmation', null, {
+                'app_id': "<?php echo $this->escapeHtml($messengerappId); ?>",
+                'page_id': "<?php echo $this->escapeHtml($fbPageId); ?>",
+                'ref': 'shopping-cart-company',
+                'user_ref': '<?php echo $this->escapeHtml($randVal); ?>'
+            });
+        }
+
+        // Add our field to the data submitted by Review.save()
+        Review.prototype.save = Review.prototype.save.wrap(function (fbmessenger) {
+            confirmOptIn();
+            var form = $(this.agreementsForm) ? $(this.agreementsForm) : $(payment.form);
+            if (form) {
+                var fbField = $('fbmessenger');
+                var userRef = $('user_ref');
+                form.insert(fbField);
+                form.insert(userRef);
+            }
+            fbmessenger();
+        });
+    </script>
+<?php } ?>
+<?php if ($botHelper->isEnable() && $botHelper->isFacebookCheckboxEnable()
+    && !$botHelper->checkCustomerNotExist()
+) { ?>
+    <input type="hidden" name="fbmessenger" id="fbmessenger" value="checked"/>
+    <input type="hidden" name="optin" id="optin" value="1"/>
+    <script type="text/javascript">
+        // Add our field to the data submitted by Review.save()
+        Review.prototype.save = Review.prototype.save.wrap(function (fbmessenger) {
+            var form = $(this.agreementsForm) ? $(this.agreementsForm) : $(payment.form);
+            if (form) {
+                var fbField = $('fbmessenger');
+                var optin = $('optin');
+                form.insert(fbField);
+                form.insert(optin);
+            }
+            fbmessenger();
+        });
+    </script>
+<?php } ?>
