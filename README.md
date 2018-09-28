@@ -32,7 +32,7 @@ Botgento builds a higher engagement that can boost the sales up. The main reason
 4. Revenue Report
 5. Enhanced User Acquisition
 
-### [SEE ALL FEATURES](https://www.botgento.com/features) ###
+##### [SEE ALL FEATURES](https://www.botgento.com/features) #####
  
 ## Benefits for Business: ##
 1. *Auto Response for Constant Queries:* It's an awesome chance to continue ahead with development which is advancing like Facebook Messenger Chatbot. Botgento has started to go up against real human help administrators. You can have a smooth communication with your customers once integrated without any wrong implementation.
