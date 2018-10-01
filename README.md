@@ -8,11 +8,11 @@
 
 ## Installation ##
 
-[1. Installation through Magento Connect](https://github.com/botgento/magento1-facebook-messenger-chatbot/wiki/Installation-using-Marketplace)
+[1. Installation through Magento Connect](https://github.com/botgento/magento1-facebook-messenger-chatbot/wiki/Install-via-Magento-Connect)
 
-[2. Installation by FTP](https://github.com/botgento/magento1-facebook-messenger-chatbot/wiki/Installation-using-Ftp)
+[2. Installation by FTP](https://github.com/botgento/magento1-facebook-messenger-chatbot/wiki/Installation-via-FTP)
 
-[3. Integration and Configuration](https://github.com/botgento/magento1-facebook-messenger-chatbot/wiki/Configure-the-extension)
+[3. Integration and Configuration](https://github.com/botgento/magento1-facebook-messenger-chatbot/wiki/Integration-and-Configuration)
 
 [4. Troubleshooting](https://github.com/botgento/magento1-facebook-messenger-chatbot/wiki/Troubleshooting)
 
