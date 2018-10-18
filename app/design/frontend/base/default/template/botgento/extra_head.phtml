@@ -19,11 +19,13 @@ if ($botHelper->isEnable()) {
     
     $output = $botHelper->genBGCValue($curentPageTitle);
     $uuid = $botHelper->getUuid();
+    $bgc_csrf = $botHelper->getWebsiteApiKeyByCurrentWebsite();
 
     ?>
     <script type="text/javascript">
         var bgc_uuid = "<?php echo $uuid ?>";
         var bgc = "<?php echo $output ?>";
+        var bgc_csrf = "<?php echo $bgc_csrf ?>";
 
         function setBgc() {
             jQuery.ajax({
