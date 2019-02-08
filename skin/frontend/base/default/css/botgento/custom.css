@@ -8,15 +8,6 @@
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-
-.botgento-instock-alert {
-    border: 1px solid rgba(204, 204, 204, 0.3);
-    padding: 10px;
-    border-radius: 4px;
-    clear: both;
-}
-
-.botgento-instock-alert-text {
-    font-size: 12px;
-    margin-bottom: 5px;
-}
+.botgento-instock-alert { border: 1px solid rgba(204, 204, 204, 0.3); padding: 10px; border-radius: 4px; clear: both; }
+.botgento-instock-alert-text { font-size: 12px; margin-bottom: 5px; }
+.botgento-check-product { width: 100%; font-size: 12px!important;float: left; border: 1px solid rgba(204, 204, 204, 0.3); padding: 10px; border-radius: 4px; clear: both; margin-bottom: 10px; }

@@ -291,31 +291,38 @@ class Botgento_Base_Model_Observer
         if ($quote->getId()) {
             $quoteId = $quote->getId();
             $uuid = $this->getBotHelper()->getUuid();
-            $collection = Mage::getModel('botgento/subscribermapping')
-                ->getCollection()
-                ->addFieldToFilter("quote_id", $quoteId)
-                ->addFieldToFilter("uuid", $uuid);
-            if (!$collection->getSize()) {
-                $subscriberMappingModel = Mage::getModel('botgento/subscribermapping');
-                $subscriberMappingModel->setQuoteId($quoteId);
-                $subscriberMappingModel->setUuid($uuid);
+            $checked  = Mage::app()->getRequest()->getPost('fbmessenger');
+            if ($checked === 'checked') {
+                $collection = Mage::getModel('botgento/subscribermapping')
+                    ->getCollection()
+                    ->addFieldToFilter("quote_id", $quoteId)
+                    ->addFieldToFilter("uuid", $uuid);
+                $user_ref = Mage::app()->getRequest()->getPost('user_ref');
+                if ($collection->getSize()) {
+                    $user_ref = Mage::app()->getRequest()->getPost('user_ref');
+                    $subscriberMappingModel = Mage::getModel('botgento/subscribermapping');
+                    $subscriberMappingModel->setQuoteId($quoteId);
+                    $subscriberMappingModel->setUuid($uuid);
 
-                $cookie = Mage::getModel('core/cookie')->get(Botgento_Base_Helper_Data::BGC_OPTION_COOKIE_NAME);
-                if (!empty($cookie) && $cookie == 1) {
-                    $subscriberMappingModel->setIsButtonPress(1);
-                } else {
-                    $subscriberMappingCollection = Mage::getModel('botgento/subscribermapping')
-                        ->getCollection()
-                        ->addFieldToFilter("uuid", $uuid)
-                        ->getLastItem();
-                    if ($subscriberMappingCollection->hasData()) {
-                        $subscriberMappingModel->setIsButtonPress($subscriberMappingCollection->getIsButtonPress());
+                    $cookie = Mage::getModel('core/cookie')->get(Botgento_Base_Helper_Data::BGC_OPTION_COOKIE_NAME);
+                    if (!empty($cookie) && $cookie == 1) {
+                        $subscriberMappingModel->setUserRef($user_ref);
                     } else {
-                        $subscriberMappingModel->setIsButtonPress(0);
+                        $subscriberMappingCollection = $collection->getLastItem();
+                        if ($subscriberMappingCollection->hasData()) {
+                            $subscriberMappingModel = $subscriberMappingCollection;
+                        }
                     }
-                }
 
-                $subscriberMappingModel->save();
+                    $subscriberMappingModel->setUserRef($user_ref);
+                    $subscriberMappingModel->save();
+                } else {
+                    $subscriberMappingModel = Mage::getModel('botgento/subscribermapping');
+                    $subscriberMappingModel->setQuoteId($quoteId);
+                    $subscriberMappingModel->setUuid($uuid);
+                    $subscriberMappingModel->setUserRef($user_ref);
+                    $subscriberMappingModel->save();
+                }
             }
         }
     }
@@ -385,6 +392,7 @@ class Botgento_Base_Model_Observer
             $data = array();
             $data['type'] = 'abandoned-cart';
             $data['customer_email'] = $order->getCustomerEmail();
+            $data['customer_name'] = $order->getCustomerName();
             $data['order_id'] = $order->getIncrementId();
             $data['order_amount'] = $order->getBaseGrandTotal();
             $data['subtotal'] = $order->getBaseSubtotal();

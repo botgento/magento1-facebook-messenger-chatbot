@@ -214,6 +214,15 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get Botgento Sdk Url
+     * @return mixed
+     */
+    public function getBgcSdkUrl()
+    {
+        return "https://app.botgento.com/sdk/botgento/" . self::getWebsiteHash() .".js";
+    }
+
+    /**
      * Get order send time
      *
      * @return int
@@ -290,10 +299,10 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
 
                 $data[] = array(
                     "category_id" => $_collection->getId(),
-                    "name" => $_collection->getName(),
+                    "name" => mb_convert_encoding($_collection->getName(), 'HTML-ENTITIES', 'utf-8'),
                     "url_key" => $_collection->getUrlKey(),
                     "thumbnail" => $categoryThumb,
-                    "description" => strip_tags($_collection->getDescription()),
+                    "description" => mb_convert_encoding(strip_tags($_collection->getDescription()), 'HTML-ENTITIES', 'utf-8'),
                     "image" => $categoryImage,
                     "url_path" => $_collection->getUrlPath(),
                 );
@@ -365,10 +374,10 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
                 if ($_category->getId()) {
                     $data[] = array(
                         "category_id" => $_category->getId(),
-                        "name" => $_category->getName(),
+                        "name" => mb_convert_encoding($_category->getName(), 'HTML-ENTITIES', 'utf-8'),
                         "url_key" => $_category->getUrlKey(),
                         "thumbnail" => $categoryThumb,
-                        "description" => strip_tags($_category->getDescription()),
+                        "description" => mb_convert_encoding(strip_tags($_category->getDescription()), 'HTML-ENTITIES', 'utf-8'),
                         "image" => $categoryImage,
                         "url_path" => $_category->getUrlPath(),
                     );
@@ -441,41 +450,13 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
             $totalCnt = $products->getSize();
             $this->setLimit($products, $limit, $offset);
             $store = Mage::app()->getStore();
+            $currencyCode = $store->getCurrentCurrencyCode();
+            $currencySym = Mage::app()->getLocale()
+                ->currency($store->getCurrentCurrencyCode())->getSymbol();
+            $currencyName = Mage::app()->getLocale()
+                ->currency($store->getCurrentCurrencyCode())->getName();
             foreach ($products as $product) {
-                $data[] = array(
-                    "product_id" => $product->getId(),
-                    "sku" => $product->getSku(),
-                    "product_type" => $product->getTypeID(),
-                    "catId" => $product->getCategoryIds(),
-                    "name" => $product->getName(),
-                    "description" => substr(strip_tags($product->getDescription()), 0, 255),
-                    "short_description" => substr(strip_tags($product->getShortDescription()), 0, 255),
-                    "status" => $product->getStatus(),
-                    "url_key" => $product->getUrlKey(),
-                    "thumbnail" => (string)Mage::helper('catalog/image')
-                        ->init($product, 'thumbnail')
-                        ->constrainOnly(false)
-                        ->keepAspectRatio(true)
-                        ->keepFrame(true)->resize(80, 80),
-                    "image" => (string)Mage::helper('catalog/image')
-                        ->init($product, 'small_image')
-                        ->constrainOnly(true)
-                        ->keepAspectRatio(true)
-                        ->keepFrame(true)->resize(600, 315),
-                    "url_path" => $product->getUrlPath(),
-                    "currency_code" => $store->getCurrentCurrencyCode(),
-                    "currency_symbol" => Mage::app()->getLocale()
-                        ->currency($store->getCurrentCurrencyCode())->getSymbol(),
-                    "currency_name" => Mage::app()->getLocale()
-                        ->currency($store->getCurrentCurrencyCode())->getName(),
-                    "price" => number_format($product->getPrice(), 2),
-                    "final_price" => number_format($product->getFinalPrice(), 2),
-                    "special_price" => number_format($product->getSpecialPrice(), 2),
-                    "special_from_date" => $product->getSpecialFromDate(),
-                    "special_to_date" => $product->getSpecialToDate(),
-                    "minimal_price" => number_format($product->getMinimalPrice(), 2),
-                    "cart_url" => "botgento/cart/add/id/" . $product->getId()
-                );
+                $data[] = $this->_prepareProductData($product, $currencyCode, $currencySym, $currencyName);
             }
         }
 
@@ -526,44 +507,14 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
             ->addAttributeToFilter('visibility', $visibility)
             ->addMinimalPrice();
         $store = Mage::app()->getStore();
+        $currencyCode = $store->getCurrentCurrencyCode();
+        $currencySym = Mage::app()->getLocale()
+            ->currency($store->getCurrentCurrencyCode())->getSymbol();
+        $currencyName = Mage::app()->getLocale()
+            ->currency($store->getCurrentCurrencyCode())->getName();
         foreach ($products as $product) {
             if ($product->getId()) {
-                $data[] = array(
-                    "product_id" => $product->getId(),
-                    "sku" => $product->getSku(),
-                    "product_type" => $product->getTypeId(),
-                    "catId" => $product->getCategoryIds(),
-                    "name" => $product->getName(),
-                    "description" => substr(strip_tags($product->getDescription()), 0, 255),
-                    "short_description" => substr(strip_tags($product->getShortDescription()), 0, 255),
-                    "status" => $product->getStatus(),
-                    "url_key" => $product->getUrlKey(),
-                    "thumbnail" => (string)Mage::helper('catalog/image')
-                        ->init($product, 'thumbnail')
-                        ->constrainOnly(false)
-                        ->keepAspectRatio(true)
-                        ->keepFrame(true)
-                        ->resize(80, 80),
-                    "image" => (string)Mage::helper('catalog/image')
-                        ->init($product, 'small_image')
-                        ->constrainOnly(true)
-                        ->keepAspectRatio(true)
-                        ->keepFrame(true)
-                        ->resize(600, 315),
-                    "url_path" => $product->getUrlPath(),
-                    "currency_code" => $store->getCurrentCurrencyCode(),
-                    "currency_symbol" => Mage::app()->getLocale()
-                        ->currency($store->getCurrentCurrencyCode())->getSymbol(),
-                    "currency_name" => Mage::app()->getLocale()
-                        ->currency($store->getCurrentCurrencyCode())->getName(),
-                    "price" => number_format($product->getPrice(), 2),
-                    "final_price" => number_format($product->getFinalPrice(), 2),
-                    "special_price" => number_format($product->getSpecialPrice(), 2),
-                    "special_from_date" => $product->getSpecialFromDate(),
-                    "special_to_date" => $product->getSpecialToDate(),
-                    "minimal_price" => number_format($product->getMinimalPrice(), 2),
-                    "cart_url" => "botgento/cart/add/id/" . $product->getId()
-                );
+                $data[] = $this->_prepareProductData($product, $currencyCode, $currencySym, $currencyName);
             }
         }
 
@@ -662,10 +613,10 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
 
                 $data[] = array(
                     "category_id" => $item->getId(),
-                    "name" => $item->getName(),
+                    "name" => mb_convert_encoding($item->getName(), 'HTML-ENTITIES', 'utf-8'),
                     "url_key" => $item->getUrlKey(),
                     "thumbnail" => $categoryThumb,
-                    "description" => strip_tags($item->getDescription()),
+                    "description" => mb_convert_encoding(strip_tags($item->getDescription()), 'HTML-ENTITIES', 'utf-8'),
                     "image" => $categoryImage,
                     "url_path" => $item->getUrlPath(),
                     "sub_category_count" => $categoryCnt->getSize(),
@@ -855,7 +806,7 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
                     "order_number" => $_order->getIncrementId(),
                     "order_date" => $_order->getCreatedAtStoreDate()
                         ->toString(Varien_Date::DATETIME_INTERNAL_FORMAT),
-                    "billing_name" => $_order->getBillingAddress()->getName(),
+                    "billing_name" => mb_convert_encoding($_order->getBillingAddress()->getName(), 'HTML-ENTITIES', 'utf-8'),
                     "order_amount" => Mage::helper('core')->currency($_order->getGrandTotal(), true, false),
                     "status" => $_order->getStatus(),
                     "order_image" => $image
@@ -904,7 +855,7 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
                 foreach ($items as $item) {
                     $product = Mage::getModel('catalog/product')->load($item->getProductId());
                     $elements[] = array(
-                        "title" => $item->getName(),
+                        "title" => mb_convert_encoding($item->getName(), 'HTML-ENTITIES', 'utf-8'),
                         "subtitle" => "",
                         "quantity" => (int)$item->getQtyOrdered(),
                         "price" => (float)$item->getPrice(),
@@ -915,7 +866,7 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
 
                 $data = array(
                     'template_type' => 'receipt',
-                    'recipient_name' => $order->getCustomerName(),
+                    'recipient_name' => mb_convert_encoding($order->getCustomerName(), 'HTML-ENTITIES', 'utf-8'),
                     'order_number' => $order->getIncrementId(),
                     'currency' => $order->getOrderCurrencyCode(),
                     'payment_method' => $order->getPayment()->getMethodInstance()->getTitle(),
@@ -995,40 +946,7 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
                 /** @var Mage_Catalog_Model_Product $product */
                 $product = $item->getProduct();
                 if ($product->getId()) {
-                    $data[] = array(
-                        "product_id" => $product->getId(),
-                        "sku" => $product->getSku(),
-                        "product_type" => $product->getTypeID(),
-                        "catId" => $product->getCategoryIds(),
-                        "name" => $product->getName(),
-                        "description" => substr(strip_tags($product->getDescription()), 0, 255),
-                        "short_description" => substr(strip_tags($product->getShortDescription()), 0, 255),
-                        "status" => $product->getStatus(),
-                        "url_key" => $product->getUrlKey(),
-                        "thumbnail" => (string)Mage::helper('catalog/image')
-                            ->init($product, 'thumbnail')
-                            ->constrainOnly(false)
-                            ->keepAspectRatio(true)
-                            ->keepFrame(true)
-                            ->resize(80, 80),
-                        "image" => (string)Mage::helper('catalog/image')
-                            ->init($product, 'small_image')
-                            ->constrainOnly(true)
-                            ->keepAspectRatio(true)
-                            ->keepFrame(true)
-                            ->resize(600, 315),
-                        "url_path" => $product->getUrlPath(),
-                        "currency_code" => $currencyCode,
-                        "currency_symbol" => $currencySym,
-                        "currency_name" => $currencyName,
-                        "price" => $product->getPrice(),
-                        "final_price" => $product->getFinalPrice(),
-                        "special_price" => $product->getSpecialPrice(),
-                        "special_from_date" => $product->getSpecialFromDate(),
-                        "special_to_date" => $product->getSpecialToDate(),
-                        "minimal_price" => $product->getMinimalPrice(),
-                        "cart_url" => "botgento/cart/add/id/".$product->getId()
-                    );
+                    $data[] = $this->_prepareProductData($product, $currencyCode, $currencySym, $currencyName);
                 }
             }
 
@@ -1225,6 +1143,67 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get store list
+     */
+    public function getStoreInfo()
+    {
+        /** @var Mage_Core_Model_Resource_Website_Collection $collection */
+        $collection = Mage::getModel('core/website')
+            ->getCollection();
+        $wlist = array();
+
+        /** @var Mage_Core_Model_Website $website */
+        foreach ($collection as $website) { // Websites
+            $website->setId($website->getWebsiteId());
+            $groupCollection = $website->getGroupCollection();
+            $defaultGroupId = $website->getDefaultGroupId();
+            $stores = array();
+            /** @var $storeGroup Mage_Core_Model_Store_Group */
+            foreach ($groupCollection as $storeGroup) { // Stores
+                $storeView = array();
+                $storeCollection = $storeGroup->getStoreCollection();
+
+                /** @var Mage_Core_Model_Store $store */
+                foreach ($storeCollection as $storeViewItem) { // Store views
+                    $storeView[] = array(
+                        'view_name' => $storeViewItem->getName(),
+                        'code' => $storeViewItem->getCode(),
+                        'sort_order' => $storeViewItem->getSortOrder(),
+                        'status' => $storeViewItem->getIsActive(),
+                    );
+                }
+
+                $stores[] = array(
+                    'id' => $storeGroup->getId(),
+                    'store_name' => $storeGroup->getName(),
+                    'default_store_view' => $storeGroup->getDefaultStore()->getCode(),
+                    'store_views' => $storeView
+                );
+            }
+
+            $wlist[] = array(
+                'website_name' => $website->getName(),
+                'website_code' => $website->getCode(),
+                'base_unsecure_url' => Mage::getStoreConfig('web/unsecure/base_url', $website->getDefaultStore()->getId()),
+                'base_secure_url' => Mage::getStoreConfig('web/secure/base_url', $website->getDefaultStore()->getId()),
+                'sort_order' => $website->getSortOrder(),
+                'default_store' => $defaultGroupId,
+                'stores' => $stores
+            );
+        }
+
+        $response = array(
+            'platform' => 'magento',
+            'ver'   => Mage::getVersion(),
+            'add_store_code_in_url' => Mage::getStoreConfig('web/url/use_store'),
+            'lists'=> $wlist,
+            'status'=>'success'
+        );
+
+        return $response;
+    }
+
+    /**
      * Check customer already register for facebook checkbox plugin
      *
      * @return bool
@@ -1323,12 +1302,21 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
     /**
      * Return Botgento API Url
      *
-     * @param $params
      * @return string
      */
     public function getBotgentoUrl()
     {
         return "https://api.botgento.com/";
+    }
+
+    /**
+     * Return Botgento SDK Url
+     *
+     * @return string
+     */
+    public function getBotgentoSdk()
+    {
+        return "https://app.botgento.com/sdk/botgento/" . $this->getWebsiteHash().'.js';
     }
 
     /**
@@ -1367,7 +1355,7 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
         if (!empty($cookie)) {
             return $cookie;
         } else {
-            $uuid = md5($this->getSessionId());
+            $uuid = substr(md5($this->getSessionId()), 0, 16);
             Mage::getModel('core/cookie')
                 ->set(self::BGC_UUID_COOKIE_NAME, $uuid, 86400*24, null, null, null, false);
         }
@@ -1464,6 +1452,7 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
             $lastSnycDateTime = date('Y-m-d H:i:s', strtotime($syncLogModel->getCreatedAt()));
         }
 
+        /** @var \Mage_Sales_Model_Resource_Quote_Collection $quoteCollection */
         $quoteCollection = Mage::getModel('sales/quote')
             ->getCollection()
             ->addFieldToFilter('is_active', 1)
@@ -1471,6 +1460,10 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
 
         if (isset($lastSnycDateTime)) {
             $quoteCollection->addFieldToFilter('updated_at', array('from'=>$lastSnycDateTime));
+        }
+
+        if ($quoteCollection->getSize() == 0) {
+            return array();
         }
 
         $data = array();
@@ -1546,20 +1539,21 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
             }
         }
 
+        $resource = Mage::getSingleton('core/resource');
+        $subscribeTableName = $resource->getTableName('al_botgento_subscriber_quote_mapping');
+
+        $quoteCollection->getSelect()->join(array('sub2' => $subscribeTableName), 'entity_id = sub2.quote_id AND sub2.uuid != ""', array('uuid', 'user_ref'));
+
         foreach ($quoteCollection as $quote) {
             $baseCurrencyCode = $quote->getBaseCurrencyCode();
 
-            $subscriberMappingCollection = Mage::getModel('botgento/subscribermapping')
-                ->getCollection()
-                ->addFieldToFilter("quote_id", $quote->getId())
-                ->getLastItem();
-
-            if ($subscriberMappingCollection->hasData() && $subscriberMappingCollection->getIsButtonPress() == 1) {
+            if ($quote->hasData() && $quote->getUserRef()) {
                 foreach ($attributeArray as $value) {
                     $tempData[$value] = $quote->getData($value);
                 }
 
-                $tempData['bgc_uuid'] = $subscriberMappingCollection->getUuid();
+                $tempData['bgc_uuid'] = $quote->getUuid();
+                $tempData['user_ref'] = $quote->getUserRef();
 
                 $itemCollection = $quote->getItemsCollection();
                 $itemCollection->addFieldToFilter('parent_item_id', array('null' => true));
@@ -1677,43 +1671,7 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
                     unset($uuidArray);
                     unset($instockALertIds);
 
-                    $tempData['product'] = array(
-                        "product_id" => $product->getId(),
-                        "sku" => $product->getSku(),
-                        "product_type" => $product->getTypeID(),
-                        "catId" => $product->getCategoryIds(),
-                        "name" => $product->getName(),
-                        "description" => substr(strip_tags($product->getDescription()), 0, 255),
-                        "short_description" => substr(strip_tags($product->getShortDescription()), 0, 255),
-                        "status" => $product->getStatus(),
-                        "url_key" => $product->getUrlKey(),
-                        "thumbnail" => (string)Mage::helper('catalog/image')
-                            ->init($product, 'thumbnail')
-                            ->constrainOnly(false)
-                            ->keepAspectRatio(true)
-                            ->keepFrame(true)
-                            ->resize(80, 80),
-                        "image" => (string)Mage::helper('catalog/image')
-                            ->init($product, 'small_image')
-                            ->constrainOnly(true)
-                            ->keepAspectRatio(true)
-                            ->keepFrame(true)
-                            ->resize(600, 315),
-                        "url_path" => $product->getUrlPath(),
-                        "currency_code" => $currencyCode,
-                        "currency_symbol" => $currencySym,
-                        "currency_name" => $currencyName,
-                        "price" => $product->getPrice(),
-                        "final_price" => $product->getFinalPrice(),
-                        "special_price" => $product->getSpecialPrice(),
-                        "special_from_date" => $product->getSpecialFromDate(),
-                        "special_to_date" => $product->getSpecialToDate(),
-                        "minimal_price" => $product->getMinimalPrice(),
-                        "cart_url" => "botgento/cart/add/id/".$product->getId()
-                    );
-
-                    $data[] = $tempData;
-                    unset($tempData);
+                    $data[] = array('product' => $this->_prepareProductData($product, $currencyCode, $currencySym, $currencyName)); // $tempData;
                 }
             }
         }
@@ -1764,5 +1722,67 @@ class Botgento_Base_Helper_Data extends Mage_Core_Helper_Abstract
         $iv = substr(hash('sha256', $secretIv), 0, 16);
 
         return openssl_encrypt(json_encode($data), $encryptMethod, $key, 0, $iv);
+    }
+
+    public function generateUserRef($pageArr = array())
+    {
+        $pageArr = array('unique_chr' => rand(100000, 999999)) + $pageArr;
+        $bgcUserRef = 'bgcfbopt-' . $this->getUuid() . '-'; //get from the session
+        $encryptMethod = "AES-256-CBC";
+        $encryptionKey = $this->getWebsiteApiKey(); //Website ApiKey: base_options/botgento/api_key
+        $secretIv = $this->getWebsiteHash(); //Website hashKey: botgento/website/hash
+        $key = hash('sha256', $encryptionKey);
+        $iv = substr(hash('sha256', $secretIv), 0, 16);
+        $bgcUserRef .= openssl_encrypt(json_encode($pageArr), $encryptMethod, $key, 0, $iv);
+        return $bgcUserRef;
+    }
+
+    /**
+    * Prepare product data array
+    *
+    * @param $product
+    * @param $currencyCode
+    * @param $currencySym
+    * @param $currencyName
+    * @return array
+    */
+    protected function _prepareProductData($product, $currencyCode, $currencySym, $currencyName)
+    {
+        $productArr = array(
+            "product_id" => $product->getId(),
+            "sku" => $product->getSku(),
+            "product_type" => $product->getTypeID(),
+            "catId" => $product->getCategoryIds(),
+            "name" => mb_convert_encoding($product->getName(), 'HTML-ENTITIES', 'utf-8'),
+            "description" => mb_convert_encoding(substr(strip_tags($product->getDescription()), 0, 255), 'HTML-ENTITIES', 'utf-8'),
+            "short_description" => mb_convert_encoding(substr(strip_tags($product->getShortDescription()), 0, 255), 'HTML-ENTITIES', 'utf-8'),
+            "status" => $product->getStatus(),
+            "url_key" => $product->getUrlKey(),
+            "thumbnail" => (string)Mage::helper('catalog/image')
+                ->init($product, 'thumbnail')
+                ->constrainOnly(false)
+                ->keepAspectRatio(true)
+                ->keepFrame(true)
+                ->resize(80, 80),
+            "image" => (string)Mage::helper('catalog/image')
+                ->init($product, 'small_image')
+                ->constrainOnly(true)
+                ->keepAspectRatio(true)
+                ->keepFrame(true)
+                ->resize(600, 315),
+            "url_path" => $product->getUrlPath(),
+            "currency_code" => $currencyCode,
+            "currency_symbol" => mb_convert_encoding($currencySym, 'HTML-ENTITIES', 'utf-8'),
+            "currency_name" => mb_convert_encoding($currencyName, 'HTML-ENTITIES', 'utf-8'),
+            "price" => $product->getPrice(),
+            "final_price" => $product->getFinalPrice(),
+            "special_price" => $product->getSpecialPrice(),
+            "special_from_date" => $product->getSpecialFromDate(),
+            "special_to_date" => $product->getSpecialToDate(),
+            "minimal_price" => $product->getMinimalPrice(),
+            "cart_url" => "botgento/cart/add/id/".$product->getId()
+        );
+
+        return $productArr;
     }
 }

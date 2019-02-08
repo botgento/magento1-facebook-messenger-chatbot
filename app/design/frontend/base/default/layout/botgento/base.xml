@@ -45,6 +45,7 @@
             <reference name="product.info">
                 <reference name="alert.urls">
                     <block type="catalog/product_view" name="botgento-product-outofstock-button" template="botgento/outofstock.phtml" after="-"/>
+                    <block type="catalog/product_view" name="botgento-product-checkbox" template="botgento/product.phtml"/>
                 </reference>
             </reference>
         </reference>

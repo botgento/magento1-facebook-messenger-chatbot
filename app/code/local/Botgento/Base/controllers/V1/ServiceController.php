@@ -29,9 +29,7 @@ class Botgento_Base_V1_ServiceController extends Mage_Core_Controller_Front_Acti
             return false;
         }
 
-        if ($this->getRequest()->getHeader('Authorization') != $apiKey
-            && $params['type'] != "ping"
-        ) {
+        if ($this->getRequest()->getHeader('Authorization') != $apiKey && $params['type'] != "ping" && $params['type'] != "store.info") {
             $data = array(
                 'status' => 'fail',
                 'message' => 'Authorization Failed'
@@ -63,6 +61,14 @@ class Botgento_Base_V1_ServiceController extends Mage_Core_Controller_Front_Acti
         $params = json_decode($this->getRequest()->getParam('payload'), true);
         $data = null;
         if ($params['type'] != "" && $this->_authorized) {
+            $requestedStoreCode = $this->getRequest()->getParam('store_code');
+            if (!empty($requestedStoreCode)) {
+                $storeId = Mage::getSingleton('core/store')->load($requestedStoreCode, 'code')->getId();
+                if (!empty($storeId)) {
+                    Mage::app()->setCurrentStore($storeId);
+                }
+            }
+
             if ($params['type'] == 'categories.list') {
                 $data = $this->getBotHelper()
                     ->getCategoryListApi($params['options']['offset'], $params['options']['limit']);
@@ -93,6 +99,8 @@ class Botgento_Base_V1_ServiceController extends Mage_Core_Controller_Front_Acti
                 $data = $this->getBotHelper()->saveAttributeDataToTable($params['options']);
             } elseif ($params['type'] == "quote.orders") {
                 $data = $this->getBotHelper()->getOrderStatusFromQuote($params['options']);
+            } elseif ($params['type'] == "store.info") {
+                $data = $this->getBotHelper()->getStoreInfo();
             } else {
                 $data = array(
                     'status'=>'Success',

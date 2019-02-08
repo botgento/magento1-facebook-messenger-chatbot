@@ -1,0 +1,67 @@
+<?php
+/**
+ * Botgento
+ *
+ * @category    Botgento
+ * @package     Botgento_Base
+ * @author      Botgento Team <support@botgento.com>
+ * @copyright   Botgento (https://www.botgento.com)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/**
+ * @var Botgento_Base_Helper_Data $botHelper
+ */
+$botHelper = Mage::helper('botgento');
+if ($botHelper->isEnable()) {
+    $product = $this->getProduct();
+
+    if (!empty($product) && $product->isAvailable()) {
+        $messengerappId = $botHelper->getMessengerappId();
+        $fbPageId = $botHelper->getFbPageId();
+
+        if ($botHelper->isEnable() && $botHelper->isFacebookCheckboxEnable()
+            && $botHelper->checkCustomerNotExist()
+        ) {
+            $pageArr = [
+                'page_uri' => $botHelper->getCurrentUri(),
+                'product_id' => $product->getId()
+            ];
+            $userRef = $botHelper->generateUserRef($pageArr);
+            ?>
+            <div class="botgento-check-product" style="width: 100%; font-size: 12px!important;float: left;">
+            <div id="fb-loader" class="fb-loader">
+                <?php echo $this->escapeHtml($this->__('Please wait...')); ?>
+            </div>
+            <input type="hidden" name="fbmessenger" id="fbmessenger" value=""/>
+            <input type="hidden" name="user_ref" id="user_ref" value="<?php echo $userRef; ?>"/>
+            <div class="messenger-title" id="messenger-title" style="display: none">
+                <?php echo $this->escapeHtml($this->__('Send order updates on:')); ?>
+            </div>
+            <div class="fb-messenger-checkbox"
+                 origin="<?php echo $botHelper->origin(); ?>"
+                 page_id="<?php echo $this->escapeHtml($fbPageId); ?>"
+                 messenger_app_id="<?php echo $this->escapeHtml($messengerappId); ?>"
+                 user_ref="<?php echo $userRef; ?>"
+                 data-ref="BGC_ABDON-CART"
+                 prechecked="true"
+                 allow_login="true" size="small">
+            </div>
+            </div>
+
+            <script type="text/javascript">
+                jQuery(document).ready(function () {
+                    jQuery('.botgento-check-product').insertAfter('.short-description'); // move after description div
+                    jQuery.ajaxSetup({cache: true});
+                    jQuery(document).on('click', 'form#product_addtocart_form .add-to-cart-buttons button', function(){
+                        bgcClass.bgcUserCheckboxConfirm('BGC_ABDON-CART','<?php echo $userRef; ?>');
+                    });
+
+                    $('product_addtocart_form').observe('submit', function() {
+                        bgcClass.bgcUserCheckboxConfirm('BGC_ABDON-CART','<?php echo $userRef; ?>');
+                    })
+                });
+            </script>
+        <?php } ?>
+    <?php } ?>
+<?php } ?>

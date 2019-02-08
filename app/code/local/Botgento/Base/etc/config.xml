@@ -13,18 +13,18 @@
 <config>
     <modules>
         <Botgento_Base>
-            <version>1.0.4</version>
+            <version>1.0.7</version>
         </Botgento_Base>
     </modules>
     <frontend>
         <routers>
-            <base>
-                <use>standard</use>
+            <botgento>
+                <use>botgento</use>
                 <args>
                     <module>Botgento_Base</module>
                     <frontName>botgento</frontName>
                 </args>
-            </base>
+            </botgento>
         </routers>
         <events>
             <sales_quote_save_after>
@@ -161,6 +161,14 @@
                 <send_timer>0</send_timer>
             </order>
         </base_options>
+        <web>
+            <routers>
+                <botgento>
+                    <area>frontend</area>
+                    <class>Botgento_Base_Controller_Router</class>
+                </botgento>
+            </routers>
+        </web>
     </default>
     <crontab>
         <jobs>

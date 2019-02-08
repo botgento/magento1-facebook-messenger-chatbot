@@ -14,7 +14,9 @@
  */
 $botHelper = Mage::helper('botgento');
 if ($botHelper->isEnable()) {
-
+    $bgcSdkUrl = $botHelper->getBgcSdkUrl(); ?>
+    <script type="text/javascript" src="<?php echo $bgcSdkUrl; ?>" async="async"></script>
+    <?php
     $curentPageTitle = $this->getLayout()->getBlock('head')->getTitle();
     
     $output = $botHelper->genBGCValue($curentPageTitle);
@@ -28,13 +30,16 @@ if ($botHelper->isEnable()) {
         var bgc_csrf = "<?php echo $bgc_csrf ?>";
 
         function setBgc() {
+            <?php /*
+            due to stop abandon cart for the widget send to messenger button
+            modified on: Dec 24, 2018
             jQuery.ajax({
                 url: "<?php echo $this->getUrl('botgento/demo/bgc');?>",
                 headers : { 'Authorization' : "<?php echo $botHelper->getWebsiteApiKey();?>" },
                 success: function (xhr) {
                     console.log(xhr);
                 }
-            });
+            }); */ ?>
         }
     </script>
 <?php
